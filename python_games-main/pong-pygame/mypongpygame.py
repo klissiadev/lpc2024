@@ -1,7 +1,6 @@
 # Jucimar Jr
 # 2024
-# Ana Klissia Furtado Martinsgame
-
+# Ana Klissia Furtado Martins
 # 2415310025
 
 import pygame
@@ -43,6 +42,9 @@ game_over_text_rect.center = (400, 350)
 # sound effects
 bounce_sound_effect = pygame.mixer.Sound('assets/bounce.wav')
 scoring_sound_effect = pygame.mixer.Sound('assets/258020__kodack__arcade-bleep-sound.wav')
+game_over_sound_effect = pygame.mixer.Sound('assets/game-over-arcade-6435.mp3')
+game_over_sound_effect.set_volume(1.0)
+game_over_played = False
 
 # player 1
 player_1 = pygame.image.load("assets/player.png")
@@ -104,15 +106,15 @@ while game_loop:
         # ball collision with the player 1 's paddle
         if ball_x < 100 and player_1_y < ball_y + 25 and player_1_y + 150 > ball_y:
 
-            relative_y = (ball_y + 25) - player_1_y
             paddle_height = 150
             center_of_paddle = paddle_height / 2
-            distance_from_center = relative_y - center_of_paddle
+            center_of_paddle_y = player_1_y + center_of_paddle
+            distance_from_center = (ball_y + 25) - center_of_paddle_y
 
             if abs(distance_from_center) <= center_of_paddle * 0.2:  # CENTER
                 ball_dx *= -2
                 ball_dy = 0
-            elif abs(distance_from_center) < center_of_paddle * 0.3:  # Near center
+            elif abs(distance_from_center) < center_of_paddle * 0.6:  # Near center
                 ball_dx *= -0.9
                 ball_dy = 4
             else:  # Near the tip
@@ -134,15 +136,15 @@ while game_loop:
         # ball collision with the player 2 's paddle
         if ball_x > 1180 and player_2_y < ball_y + 25 and player_2_y + 150 > ball_y:
 
-            relative_y = (ball_y + 25) - player_2_y
             paddle_height = 150
-            center_of_paddle = paddle_height / 2
-            distance_from_center = relative_y - center_of_paddle
+            center_of_paddle = paddle_height/2
+            center_of_paddle_y = player_2_y + center_of_paddle
+            distance_from_center = (ball_y + 25) - center_of_paddle_y
 
             if abs(distance_from_center) <= center_of_paddle * 0.1:  # Center
                 ball_dx *= -1.3
                 ball_dy = 0
-            elif abs(distance_from_center) < center_of_paddle * 0.5:  # Near center
+            elif abs(distance_from_center) < center_of_paddle * 0.6:  # Near center
                 ball_dx *= -0.9
                 ball_dy = 4
             else:  # Near the tip
@@ -228,6 +230,9 @@ while game_loop:
         else:  # drawing defeat
             screen.fill(COLOR_BLACK)
             screen.blit(game_over_text, game_over_text_rect)
+            if not game_over_played:
+                game_over_sound_effect.play()
+                game_over_played = True
 
     # update screen
     pygame.display.flip()
